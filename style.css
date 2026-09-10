@@ -1,0 +1,1970 @@
+/* =====================================
+   RESET
+===================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+
+body {
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background: #fbf7f5;
+
+    color: #382d2d;
+
+    overflow: hidden;
+}
+
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+
+button {
+    cursor: pointer;
+}
+
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+
+/* =====================================
+   HEADER
+===================================== */
+
+.header {
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+
+    height: 78px;
+
+    background: rgba(251, 247, 245, 0.94);
+
+    backdrop-filter: blur(15px);
+
+    border-bottom:
+        1px solid #eadedb;
+
+    z-index: 1000;
+}
+
+
+.header-container {
+
+    width: min(1180px, 92%);
+
+    height: 100%;
+
+    margin: auto;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+}
+
+
+/* LOGO */
+
+.logo {
+
+    font-size: 23px;
+
+    font-weight: 700;
+
+    letter-spacing: -1px;
+}
+
+
+.logo span {
+
+    color: #a96d73;
+}
+
+
+/* =====================================
+   MENU
+===================================== */
+
+.menu {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+}
+
+
+.menu-link {
+
+    border: 0;
+
+    background: transparent;
+
+    color: #776868;
+
+    padding: 10px 16px;
+
+    border-radius: 30px;
+
+    font-size: 14px;
+
+    transition: 0.25s ease;
+}
+
+
+.menu-link:hover {
+
+    color: #a96d73;
+
+    background: #f4e9e7;
+}
+
+
+.menu-link.active {
+
+    color: white;
+
+    background: #a96d73;
+}
+
+
+/* =====================================
+   MENU MOBILE
+===================================== */
+
+.menu-mobile {
+
+    display: none;
+
+    border: 0;
+
+    background: transparent;
+
+    font-size: 26px;
+
+    color: #493939;
+}
+
+
+/* =====================================
+   APP
+===================================== */
+
+.app {
+
+    position: fixed;
+
+    top: 78px;
+
+    left: 0;
+
+    width: 100%;
+
+    height: calc(100vh - 78px);
+
+    overflow: hidden;
+}
+
+
+/* =====================================
+   PÁGINAS
+===================================== */
+
+.page {
+
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    overflow-y: auto;
+
+    overflow-x: hidden;
+
+    padding: 70px 4%;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+
+    transform: translateX(35px);
+
+    transition:
+        opacity 0.35s ease,
+        transform 0.35s ease,
+        visibility 0.35s ease;
+}
+
+
+.page.active {
+
+    opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: auto;
+
+    transform: translateX(0);
+}
+
+
+/* =====================================
+   HERO
+===================================== */
+
+#inicio {
+
+    padding: 0;
+
+    background:
+        radial-gradient(
+            circle at 75% 40%,
+            #f0dedd,
+            transparent 35%
+        ),
+        #fbf7f5;
+}
+
+
+.hero {
+
+    width: min(1180px, 92%);
+
+    min-height: 72%;
+
+    margin: auto;
+
+    display: grid;
+
+    grid-template-columns: 1fr 0.8fr;
+
+    align-items: center;
+
+    gap: 70px;
+}
+
+
+.hero-content {
+
+    max-width: 620px;
+}
+
+
+.eyebrow {
+
+    color: #a96d73;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    letter-spacing: 3px;
+}
+
+
+.hero h1 {
+
+    font-size:
+        clamp(3rem, 6vw, 5.7rem);
+
+    line-height: 0.98;
+
+    letter-spacing: -4px;
+
+    margin: 18px 0 25px;
+}
+
+
+.hero h1 span {
+
+    display: block;
+
+    color: #a96d73;
+}
+
+
+.hero p {
+
+    max-width: 570px;
+
+    color: #746565;
+
+    font-size: 17px;
+
+    line-height: 1.8;
+
+    margin-bottom: 30px;
+}
+
+
+.hero-buttons {
+
+    display: flex;
+
+    gap: 12px;
+
+    flex-wrap: wrap;
+}
+
+
+/* =====================================
+   BOTÕES
+===================================== */
+
+.btn {
+
+    min-height: 50px;
+
+    padding: 0 24px;
+
+    border-radius: 30px;
+
+    font-weight: 700;
+
+    border: 0;
+
+    transition: 0.25s ease;
+}
+
+
+.btn:hover {
+
+    transform: translateY(-3px);
+}
+
+
+.btn-primary {
+
+    background: #a96d73;
+
+    color: white;
+
+    box-shadow:
+        0 10px 25px rgba(169, 109, 115, 0.2);
+}
+
+
+.btn-outline {
+
+    background: white;
+
+    color: #493939;
+
+    border: 1px solid #e5d7d4;
+}
+
+
+/* =====================================
+   IMAGEM HERO
+===================================== */
+
+.hero-image {
+
+    height: 480px;
+
+    border-radius: 35px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #e9d0cf,
+            #f8e9e5
+        );
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    box-shadow:
+        0 30px 70px rgba(70, 45, 45, 0.12);
+}
+
+
+.image-content {
+
+    text-align: center;
+
+    color: #876064;
+}
+
+
+.image-content span {
+
+    display: block;
+
+    font-size: 30px;
+}
+
+
+.image-content strong {
+
+    display: block;
+
+    font-family: Georgia, serif;
+
+    font-size: 70px;
+
+    font-weight: normal;
+}
+
+
+.image-content small {
+
+    display: block;
+
+    margin-top: 10px;
+
+    letter-spacing: 4px;
+
+    text-transform: uppercase;
+
+    font-size: 10px;
+}
+
+
+/* =====================================
+   PARTE INFERIOR DO INÍCIO
+===================================== */
+
+.home-bottom {
+
+    width: min(1180px, 92%);
+
+    margin: auto;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 20px;
+
+    padding-bottom: 30px;
+}
+
+
+.home-bottom div {
+
+    border-top:
+        1px solid #e4d6d3;
+
+    padding-top: 15px;
+}
+
+
+.home-bottom strong {
+
+    display: block;
+
+    font-size: 14px;
+}
+
+
+.home-bottom span {
+
+    color: #887878;
+
+    font-size: 12px;
+}
+
+
+/* =====================================
+   PÁGINAS INTERNAS
+===================================== */
+
+.page-container {
+
+    width: min(1180px, 100%);
+
+    margin: auto;
+}
+
+
+.page-title {
+
+    margin-bottom: 45px;
+}
+
+
+.page-title span,
+.mini-title {
+
+    color: #a96d73;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 3px;
+}
+
+
+.page-title h2 {
+
+    font-family: Georgia, serif;
+
+    font-weight: normal;
+
+    font-size:
+        clamp(2.5rem, 5vw, 4.5rem);
+
+    line-height: 1;
+
+    margin: 12px 0;
+}
+
+
+.page-title p {
+
+    color: #776868;
+}
+
+
+/* =====================================
+   SOBRE
+===================================== */
+
+.about-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        0.85fr 1fr;
+
+    gap: 80px;
+
+    align-items: center;
+}
+
+
+.about-photo {
+
+    height: 470px;
+
+    border-radius: 30px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ead4d1,
+            #f8e9e5
+        );
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: center;
+
+    padding-bottom: 35px;
+
+    color: #79565b;
+
+    font-family: Georgia, serif;
+
+    font-size: 35px;
+}
+
+
+.about-text h3 {
+
+    font-family: Georgia, serif;
+
+    font-size: 38px;
+
+    line-height: 1.15;
+
+    font-weight: normal;
+
+    margin: 15px 0 20px;
+}
+
+
+.about-text p {
+
+    color: #776868;
+
+    line-height: 1.8;
+
+    margin-bottom: 15px;
+}
+
+
+.about-points {
+
+    margin-top: 25px;
+
+    display: grid;
+
+    gap: 12px;
+}
+
+
+.about-points div {
+
+    padding: 13px;
+
+    background: white;
+
+    border-radius: 10px;
+
+    font-size: 14px;
+}
+
+
+.about-points b {
+
+    color: #a96d73;
+
+    margin-right: 12px;
+}
+
+
+/* =====================================
+   SERVIÇOS
+===================================== */
+
+.services-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 18px;
+}
+
+
+.service-card {
+
+    position: relative;
+
+    background: white;
+
+    border:
+        1px solid #eadedb;
+
+    border-radius: 22px;
+
+    padding: 28px;
+
+    min-height: 310px;
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+
+.service-card:hover {
+
+    transform: translateY(-7px);
+
+    box-shadow:
+        0 20px 40px rgba(80, 50, 50, 0.1);
+}
+
+
+.service-number {
+
+    position: absolute;
+
+    right: 22px;
+
+    top: 22px;
+
+    color: #d9c7c5;
+
+    font-size: 12px;
+}
+
+
+.service-icon {
+
+    color: #a96d73;
+
+    font-size: 30px;
+
+    margin-bottom: 25px;
+}
+
+
+.service-card h3 {
+
+    font-family: Georgia, serif;
+
+    font-size: 25px;
+
+    font-weight: normal;
+
+    margin-bottom: 10px;
+}
+
+
+.service-card p {
+
+    color: #776868;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+}
+
+
+.card-button {
+
+    position: absolute;
+
+    bottom: 25px;
+
+    left: 28px;
+
+    border: 0;
+
+    background: transparent;
+
+    color: #a96d73;
+
+    font-weight: 700;
+
+    padding: 0;
+}
+
+
+/* =====================================
+   AGENDAMENTO
+===================================== */
+
+.booking-container {
+
+    display: grid;
+
+    grid-template-columns:
+        0.8fr 1fr;
+
+    gap: 80px;
+
+    align-items: center;
+
+    min-height: 100%;
+}
+
+
+.booking-info h2 {
+
+    font-family: Georgia, serif;
+
+    font-size:
+        clamp(3rem, 5vw, 5rem);
+
+    line-height: 0.95;
+
+    font-weight: normal;
+
+    margin: 15px 0 25px;
+}
+
+
+.booking-info > p {
+
+    color: #776868;
+
+    line-height: 1.8;
+
+    max-width: 480px;
+}
+
+
+.booking-detail {
+
+    display: flex;
+
+    gap: 15px;
+
+    align-items: center;
+
+    margin-top: 30px;
+
+    padding: 20px;
+
+    background: white;
+
+    border-radius: 15px;
+}
+
+
+.booking-detail > span {
+
+    color: #a96d73;
+
+    font-size: 22px;
+}
+
+
+.booking-detail strong {
+
+    display: block;
+
+    font-size: 14px;
+}
+
+
+.booking-detail small {
+
+    color: #887878;
+
+    font-size: 12px;
+}
+
+
+.booking-form {
+
+    background: white;
+
+    padding: 35px;
+
+    border-radius: 25px;
+
+    box-shadow:
+        0 20px 50px rgba(80, 50, 50, 0.08);
+}
+
+
+.booking-form label {
+
+    display: block;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    margin-bottom: 17px;
+}
+
+
+.booking-form input,
+.booking-form select,
+.booking-form textarea {
+
+    width: 100%;
+
+    margin-top: 7px;
+
+    padding: 13px 14px;
+
+    border:
+        1px solid #e4d7d4;
+
+    border-radius: 10px;
+
+    outline: none;
+
+    background: #fff;
+
+    color: #493939;
+}
+
+
+.booking-form input:focus,
+.booking-form select:focus,
+.booking-form textarea:focus {
+
+    border-color: #a96d73;
+
+    box-shadow:
+        0 0 0 3px rgba(169, 109, 115, 0.1);
+}
+
+
+.booking-form textarea {
+
+    resize: vertical;
+}
+
+
+.form-row {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 15px;
+}
+
+
+.whatsapp-button {
+
+    width: 100%;
+
+    border: 0;
+
+    background: #25d366;
+
+    color: white;
+
+    padding: 15px;
+
+    border-radius: 10px;
+
+    font-weight: 700;
+
+    transition: 0.25s;
+}
+
+
+.whatsapp-button:hover {
+
+    transform: translateY(-2px);
+}
+
+
+.form-note {
+
+    display: block;
+
+    text-align: center;
+
+    color: #887878;
+
+    font-size: 11px;
+
+    margin-top: 10px;
+}
+
+
+/* =====================================
+   CONTATO
+===================================== */
+
+.contact-grid {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 20px;
+
+    max-width: 850px;
+}
+
+
+.contact-card {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+
+    text-align: left;
+
+    background: white;
+
+    border:
+        1px solid #eadedb;
+
+    padding: 25px;
+
+    border-radius: 20px;
+
+    transition: 0.25s;
+
+    cursor: pointer;
+}
+
+
+button.contact-card {
+
+    color: inherit;
+}
+
+
+.contact-card:hover {
+
+    transform: translateY(-5px);
+
+    border-color: #c99a9f;
+}
+
+
+.contact-icon {
+
+    width: 50px;
+
+    height: 50px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #f5e9e7;
+
+    color: #a96d73;
+
+    font-size: 20px;
+
+    flex-shrink: 0;
+}
+
+
+.contact-card span {
+
+    display: block;
+
+    color: #a96d73;
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+    font-weight: 700;
+}
+
+
+.contact-card strong {
+
+    display: block;
+
+    font-size: 17px;
+
+    margin: 4px 0;
+}
+
+
+.contact-card small {
+
+    color: #887878;
+
+    font-size: 12px;
+}
+
+
+.contact-message {
+
+    margin-top: 50px;
+
+    padding: 30px;
+
+    border-radius: 20px;
+
+    background: #ead5d3;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+
+/* =====================================
+   WHATSAPP FLUTUANTE
+===================================== */
+
+.floating-whatsapp {
+
+    position: fixed;
+
+    right: 22px;
+
+    bottom: 22px;
+
+    z-index: 2000;
+
+    width: 58px;
+
+    height: 58px;
+
+    border: 0;
+
+    border-radius: 50%;
+
+    background: #25d366;
+
+    color: white;
+
+    font-size: 22px;
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,0.18);
+
+    transition: 0.25s;
+}
+
+
+.floating-whatsapp:hover {
+
+    transform: scale(1.08);
+}
+
+
+/* =====================================
+   TABLET
+===================================== */
+
+@media (max-width: 950px) {
+
+    .hero {
+
+        grid-template-columns: 1fr 0.8fr;
+
+        gap: 30px;
+    }
+
+
+    .hero h1 {
+
+        font-size: 4rem;
+    }
+
+
+    .hero-image {
+
+        height: 400px;
+    }
+
+
+    .services-grid {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+
+    .about-grid {
+
+        gap: 40px;
+    }
+
+}
+
+
+/* =====================================
+   CELULAR
+===================================== */
+
+@media (max-width: 700px) {
+
+    body {
+
+        overflow: hidden;
+    }
+
+
+    .header {
+
+        height: 70px;
+    }
+
+
+    .header-container {
+
+        position: relative;
+    }
+
+
+    .logo {
+
+        font-size: 20px;
+    }
+
+
+    .menu-mobile {
+
+        display: block;
+    }
+
+
+    .menu {
+
+        position: absolute;
+
+        top: 70px;
+
+        left: 0;
+
+        width: 100%;
+
+        display: none;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        padding: 12px;
+
+        background: #fbf7f5;
+
+        border-bottom:
+            1px solid #eadedb;
+    }
+
+
+    .menu.open {
+
+        display: flex;
+    }
+
+
+    .menu-link {
+
+        width: 100%;
+
+        text-align: center;
+    }
+
+
+    .app {
+
+        top: 70px;
+
+        height: calc(100vh - 70px);
+    }
+
+
+    .page {
+
+        padding: 40px 5%;
+
+        overflow-y: auto;
+    }
+
+
+    /* INÍCIO */
+
+    .hero {
+
+        width: 90%;
+
+        min-height: auto;
+
+        display: flex;
+
+        flex-direction: column;
+
+        justify-content: center;
+
+        gap: 30px;
+
+        padding: 35px 0;
+    }
+
+
+    .hero-content {
+
+        text-align: center;
+    }
+
+
+    .hero h1 {
+
+        font-size: 3.1rem;
+
+        letter-spacing: -2px;
+
+        margin-top: 14px;
+    }
+
+
+    .hero p {
+
+        font-size: 15px;
+
+        line-height: 1.6;
+    }
+
+
+    .hero-buttons {
+
+        flex-direction: column;
+    }
+
+
+    .hero-buttons .btn {
+
+        width: 100%;
+    }
+
+
+    .hero-image {
+
+        width: 100%;
+
+        height: 260px;
+
+        border-radius: 25px;
+    }
+
+
+    .image-content strong {
+
+        font-size: 55px;
+    }
+
+
+    .home-bottom {
+
+        display: none;
+    }
+
+
+    /* SOBRE */
+
+    .about-grid {
+
+        grid-template-columns: 1fr;
+
+        gap: 30px;
+    }
+
+
+    .about-photo {
+
+        height: 280px;
+    }
+
+
+    .about-text h3 {
+
+        font-size: 30px;
+    }
+
+
+    /* SERVIÇOS */
+
+    .services-grid {
+
+        grid-template-columns: 1fr;
+
+        gap: 15px;
+    }
+
+
+    .service-card {
+
+        min-height: 280px;
+    }
+
+
+    /* AGENDAMENTO */
+
+    .booking-container {
+
+        grid-template-columns: 1fr;
+
+        gap: 30px;
+
+        align-items: start;
+    }
+
+
+    .booking-info h2 {
+
+        font-size: 3rem;
+    }
+
+
+    .booking-form {
+
+        padding: 23px;
+
+        border-radius: 20px;
+    }
+
+
+    .form-row {
+
+        grid-template-columns: 1fr;
+    }
+
+
+    /* CONTATO */
+
+    .contact-grid {
+
+        grid-template-columns: 1fr;
+    }
+
+
+    .contact-message {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        text-align: center;
+    }
+
+
+    .contact-message .btn {
+
+        width: 100%;
+    }
+
+
+    .floating-whatsapp {
+
+        right: 15px;
+
+        bottom: 15px;
+
+        width: 53px;
+
+        height: 53px;
+    }
+
+}
+
+
+/* =====================================
+   CELULARES PEQUENOS
+===================================== */
+
+@media (max-width: 380px) {
+
+    .hero h1 {
+
+        font-size: 2.65rem;
+    }
+
+
+    .hero-image {
+
+        height: 220px;
+    }
+
+
+    .page-title h2 {
+
+        font-size: 2.4rem;
+    }
+
+}
+
+/* =====================================
+   NOVO SISTEMA DE AGENDAMENTO
+===================================== */
+
+.booking-section {
+    display: grid;
+    gap: 5px;
+}
+
+
+/* CALENDÁRIO */
+
+.calendar {
+    margin: 10px 0 20px;
+    padding: 20px;
+    background: #fbf7f5;
+    border: 1px solid #eadedb;
+    border-radius: 18px;
+}
+
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+
+.calendar-header strong {
+    color: #493939;
+    font-size: 15px;
+    text-transform: capitalize;
+}
+
+
+.calendar-nav {
+    width: 35px;
+    height: 35px;
+    border: 0;
+    border-radius: 50%;
+    background: white;
+    color: #a96d73;
+    font-size: 25px;
+    line-height: 1;
+    transition: 0.2s;
+}
+
+
+.calendar-nav:hover {
+    background: #a96d73;
+    color: white;
+}
+
+
+.calendar-weekdays,
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+
+.calendar-weekdays {
+    margin-bottom: 8px;
+}
+
+
+.calendar-weekdays span {
+    text-align: center;
+    font-size: 10px;
+    color: #887878;
+    font-weight: 700;
+}
+
+
+.calendar-days button {
+    aspect-ratio: 1;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: #493939;
+    font-size: 13px;
+    transition: 0.2s;
+}
+
+
+.calendar-days button:hover:not(:disabled) {
+    background: #f0dedd;
+    color: #a96d73;
+}
+
+
+.calendar-days button.today {
+    border: 1px solid #a96d73;
+}
+
+
+.calendar-days button.selected {
+    background: #a96d73;
+    color: white;
+}
+
+
+.calendar-days button:disabled {
+    color: #cfc2c0;
+    cursor: not-allowed;
+}
+
+
+/* HORÁRIOS */
+
+.schedule-area {
+    margin-bottom: 18px;
+}
+
+
+.schedule-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+
+.horarios {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+
+.horario-button {
+    padding: 11px 5px;
+    border: 1px solid #e4d7d4;
+    background: white;
+    color: #493939;
+    border-radius: 9px;
+    font-size: 13px;
+    transition: 0.2s;
+}
+
+
+.horario-button:hover {
+    border-color: #a96d73;
+    color: #a96d73;
+}
+
+
+.horario-button.selected {
+    background: #a96d73;
+    border-color: #a96d73;
+    color: white;
+}
+
+
+.schedule-message {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 15px;
+    border-radius: 10px;
+    background: #fbf7f5;
+    color: #887878;
+    font-size: 12px;
+}
+
+
+/* BOTÃO DESABILITADO */
+
+.whatsapp-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+    .calendar {
+        padding: 15px;
+    }
+
+
+    .calendar-days button {
+        font-size: 12px;
+    }
+
+
+    .horarios {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+/* =====================================
+   AGENDAMENTO EM ETAPAS
+===================================== */
+
+.booking-step {
+    margin-bottom: 28px;
+}
+
+.booking-step-hidden {
+    display: none;
+}
+
+.booking-step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 30px;
+    height: 30px;
+
+    border-radius: 50%;
+
+    background: #a96d73;
+    color: white;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    margin-bottom: 8px;
+}
+
+.booking-step h3 {
+    margin: 0 0 16px;
+    color: #493939;
+    font-size: 19px;
+}
+
+.service-row {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border: 1px solid #eadedb;
+    background: white;
+
+    padding: 15px;
+    margin-bottom: 8px;
+
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    text-align: left;
+
+    transition: 0.2s;
+}
+
+.service-row:hover,
+.service-row.selected {
+    border-color: #a96d73;
+    background: #fbf7f5;
+    transform: translateX(3px);
+}
+
+.service-text-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.service-item-name {
+    font-weight: 700;
+    color: #493939;
+}
+
+.service-item-duration {
+    font-size: 11px;
+    color: #887878;
+}
+
+.service-item-arrow {
+    font-size: 25px;
+    color: #a96d73;
+}
+
+.data-escolhida {
+    font-size: 13px;
+    color: #887878;
+    margin-bottom: 12px;
+}
+
+.calendar {
+    padding: 20px;
+
+    background: #fbf7f5;
+
+    border: 1px solid #eadedb;
+
+    border-radius: 18px;
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 18px;
+}
+
+.calendar-header strong {
+    color: #493939;
+    font-size: 15px;
+    text-transform: capitalize;
+}
+
+.calendar-nav {
+    width: 35px;
+    height: 35px;
+
+    border: 0;
+    border-radius: 50%;
+
+    background: white;
+    color: #a96d73;
+
+    font-size: 25px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.calendar-nav:hover {
+    background: #a96d73;
+    color: white;
+}
+
+.calendar-weekdays,
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.calendar-weekdays {
+    margin-bottom: 8px;
+}
+
+.calendar-weekdays span {
+    text-align: center;
+    font-size: 10px;
+    color: #887878;
+    font-weight: 700;
+}
+
+.calendar-days button {
+    aspect-ratio: 1;
+
+    border: 0;
+    border-radius: 9px;
+
+    background: transparent;
+
+    color: #493939;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.calendar-days button:hover:not(:disabled) {
+    background: #f0dedd;
+    color: #a96d73;
+}
+
+.calendar-days button.today {
+    border: 1px solid #a96d73;
+}
+
+.calendar-days button.selected {
+    background: #a96d73;
+    color: white;
+}
+
+.calendar-days button:disabled {
+    color: #cfc2c0;
+    cursor: not-allowed;
+}
+
+.horarios {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.horario-button {
+    padding: 11px 5px;
+
+    border: 1px solid #e4d7d4;
+
+    background: white;
+
+    color: #493939;
+
+    border-radius: 9px;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.horario-button:hover {
+    border-color: #a96d73;
+    color: #a96d73;
+}
+
+.horario-button.selected {
+    background: #a96d73;
+    border-color: #a96d73;
+    color: white;
+}
+
+.schedule-message {
+    grid-column: 1 / -1;
+
+    text-align: center;
+
+    padding: 15px;
+
+    border-radius: 10px;
+
+    background: #fbf7f5;
+
+    color: #887878;
+
+    font-size: 12px;
+}
+
+.resumo-agendamento {
+    margin: 20px 0;
+
+    padding: 16px;
+
+    background: #fbf7f5;
+
+    border-radius: 14px;
+
+    border: 1px solid #eadedb;
+}
+
+.resumo-agendamento strong {
+    display: block;
+    margin-bottom: 10px;
+    color: #493939;
+}
+
+.resumo-agendamento p {
+    margin: 5px 0;
+    font-size: 13px;
+    color: #6f6060;
+}
+
+.whatsapp-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+@media (max-width: 700px) {
+
+    .horarios {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .calendar {
+        padding: 15px;
+    }
+
+    .calendar-days button {
+        font-size: 12px;
+    }
+
+}
