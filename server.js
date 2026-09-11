@@ -201,7 +201,7 @@ app.post('/api/agendar', (req, res) => {
                 function (updateErr) {
                     if (updateErr || this.changes !== 1) {
                         return db.run("ROLLBACK", () => {
-                            res.status(400).json({ mensagem: "Desculpe, este horário acabou de ser preenchido!" });
+                            res.status(409).json({ mensagem: "Este horário já está reservado. Escolha outro horário." });
                         });
                     }
 
@@ -211,7 +211,10 @@ app.post('/api/agendar', (req, res) => {
                         (insertErr) => {
                             if (insertErr) {
                                 return db.run("ROLLBACK", () => {
-                                    res.status(500).json({ mensagem: "Erro ao salvar o agendamento." });
+                                    const conflito = insertErr.code === "SQLITE_CONSTRAINT" || insertErr.code === "SQLITE_CONSTRAINT_UNIQUE";
+                                    res.status(conflito ? 409 : 500).json({
+                                        mensagem: conflito ? "Este horário já está reservado. Escolha outro horário." : "Erro ao salvar o agendamento."
+                                    });
                                 });
                             }
 
@@ -297,4 +300,5 @@ app.delete('/api/admin/limpar-antigos', (req, res) => {
 // 🚀 LIGA O SERVIDOR
 app.listen(PORT, () => {
     console.log(`Tô na Aline rodando em http://localhost:${PORT}`);
+    console.log(`Banco SQLite usado: ${path.join(__dirname, "banco.db")}`);
 });
