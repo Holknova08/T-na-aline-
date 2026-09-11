@@ -1,4 +1,3 @@
-
 const pages =
     document.querySelectorAll(".page");
 
@@ -134,9 +133,23 @@ const contactWhatsapp =
 const floatingWhatsapp =
     document.getElementById("floatingWhatsapp");
 
+const cancelarAgendamento =
+    document.getElementById("cancelarAgendamento");
+
 
 const defaultMessage =
     "Olá, Aline! 🌷 Gostaria de saber mais sobre os serviços.";
+
+
+cancelarAgendamento.addEventListener(
+    "click",
+    () => {
+        const mensagem =
+            "Olá, Aline! Gostaria de solicitar o cancelamento do meu agendamento. Por favor, me ajude a localizar e cancelar o horário.";
+
+        openWhatsApp(mensagem);
+    }
+);
 
 
 whatsappButton.addEventListener(
