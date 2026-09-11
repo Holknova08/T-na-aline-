@@ -702,16 +702,8 @@ telefoneInput.addEventListener(
 
 
 function verificarFormulario() {
-
-    confirmarAgendamento.disabled =
-        !(
-            servicoSelecionado &&
-            dataSelecionada &&
-            horarioSelecionado &&
-            nomeInput.value.trim() &&
-            telefoneInput.value.trim()
-        );
-
+    // A validação definitiva acontece no clique em "Finalizar agendamento".
+    // O botão permanece disponível para não ficar visualmente bloqueado.
 }
 
 
@@ -730,9 +722,8 @@ confirmarAgendamento.addEventListener(
             !nomeInput.value.trim() ||
             !telefoneInput.value.trim()
         ) {
-
+            alert("Preencha o serviço, a data, o horário, seu nome e seu telefone para finalizar.");
             return;
-
         }
 
 
