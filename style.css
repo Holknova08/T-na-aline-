@@ -1977,3 +1977,250 @@ button.contact-card {
     }
 
 }
+
+
+/* =====================================
+   AJUSTE VISUAL — AZUL, DOURADO E ROSA
+   Mantém o layout e o funcionamento originais.
+===================================== */
+:root {
+    --azul-profundo: #081a38;
+    --azul: #123d78;
+    --azul-claro: #245d9c;
+    --dourado: #d8ad55;
+    --dourado-claro: #f0d48e;
+    --rosa: #c9789a;
+    --rosa-claro: #efb9cc;
+    --texto-claro: #f8f3ed;
+    --texto-suave: #c4d0e2;
+    --borda: rgba(240, 212, 142, 0.3);
+}
+
+body {
+    background:
+        radial-gradient(circle at 12% 12%, rgba(201, 120, 154, 0.24), transparent 30%),
+        radial-gradient(circle at 88% 18%, rgba(216, 173, 85, 0.18), transparent 28%),
+        linear-gradient(145deg, #071632 0%, #0d2b5a 52%, #182c60 100%);
+    color: var(--texto-claro);
+}
+
+.header {
+    background: rgba(8, 26, 56, 0.9);
+    border-bottom-color: var(--borda);
+}
+
+.logo,
+.page-title h2,
+.booking-info h2,
+.booking-step h3,
+.contact-message strong,
+.home-bottom strong,
+.contact-card strong,
+.resumo-agendamento strong {
+    color: var(--texto-claro);
+}
+
+.logo span,
+.hero h1 span,
+.eyebrow,
+.page-title span,
+.mini-title,
+.service-category-title,
+.booking-detail > span,
+.data-escolhida,
+.home-bottom strong,
+.contact-card span {
+    color: var(--dourado-claro);
+}
+
+.menu-link {
+    color: var(--texto-suave);
+}
+
+.menu-link:hover,
+.menu-link.active {
+    color: var(--azul-profundo);
+    background: linear-gradient(120deg, var(--dourado-claro), var(--rosa-claro));
+}
+
+.menu-mobile {
+    color: var(--texto-claro);
+}
+
+/* Remove os blocos brancos das páginas, inclusive Serviços. */
+.page,
+#inicio,
+#sobre,
+#servicos,
+#agendamento,
+#contato {
+    background: transparent;
+}
+
+.hero p,
+.booking-info > p,
+.page-title p,
+.about-text p,
+.home-bottom span,
+.contact-card small,
+.booking-detail small,
+.data-escolhida,
+.service-item-duration,
+.schedule-message {
+    color: var(--texto-suave);
+}
+
+.btn-primary {
+    color: var(--azul-profundo);
+    background: linear-gradient(120deg, var(--dourado-claro), var(--rosa-claro));
+    box-shadow: 0 10px 25px rgba(216, 173, 85, 0.22);
+}
+
+.btn-outline {
+    color: var(--texto-claro);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--borda);
+}
+
+.hero-image {
+    background: linear-gradient(145deg, rgba(201, 120, 154, 0.82), rgba(36, 93, 156, 0.85) 55%, rgba(216, 173, 85, 0.72));
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.28);
+}
+
+.image-content {
+    color: var(--texto-claro);
+}
+
+.image-content strong {
+    color: var(--azul-profundo);
+}
+
+.home-bottom div {
+    border-top-color: var(--borda);
+}
+
+.about-photo {
+    background: linear-gradient(145deg, rgba(201, 120, 154, 0.82), rgba(36, 93, 156, 0.85) 55%, rgba(216, 173, 85, 0.72));
+}
+
+.about-points div,
+.contact-card,
+.booking-detail,
+.booking-form,
+.booking-step,
+.page-title {
+    background: linear-gradient(145deg, rgba(18, 61, 120, 0.92), rgba(8, 26, 56, 0.82));
+    border-color: var(--borda);
+    color: var(--texto-claro);
+}
+
+#servicos .page-container,
+#servicos .page-title {
+    color: var(--texto-claro);
+}
+
+/* Serviços do agendamento deixam de ficar brancos e ganham contraste. */
+.service-row,
+.calendar,
+.resumo-agendamento,
+.horario-button,
+.schedule-message {
+    background: linear-gradient(145deg, rgba(36, 93, 156, 0.78), rgba(18, 61, 120, 0.86));
+    border-color: var(--borda);
+    color: var(--texto-claro);
+}
+
+.service-row:hover,
+.service-row.selected,
+.horario-button:hover,
+.horario-button.selected {
+    background: linear-gradient(120deg, rgba(216, 173, 85, 0.9), rgba(201, 120, 154, 0.88));
+    border-color: var(--dourado-claro);
+    color: var(--azul-profundo);
+}
+
+.service-item-name,
+.service-item-duration,
+.service-item-arrow,
+.booking-step h3,
+.calendar-header strong,
+.resumo-agendamento strong,
+.resumo-agendamento p {
+    color: var(--texto-claro);
+}
+
+.service-item-duration,
+.resumo-agendamento p {
+    color: var(--texto-suave);
+}
+
+.booking-form input,
+.booking-form select,
+.booking-form textarea {
+    background: rgba(5, 19, 45, 0.7);
+    border-color: var(--borda);
+    color: var(--texto-claro);
+}
+
+.calendar-nav {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--dourado-claro);
+}
+
+.calendar-nav:hover,
+.calendar-days button.selected {
+    background: var(--dourado);
+    color: var(--azul-profundo);
+}
+
+.calendar-days button {
+    color: var(--texto-claro);
+}
+
+.calendar-days button:hover:not(:disabled) {
+    background: rgba(201, 120, 154, 0.65);
+    color: var(--texto-claro);
+}
+
+/* Garante que a grade completa de horários possa ser vista na rolagem da página. */
+.booking-container,
+.booking-form,
+.booking-step,
+.horarios {
+    overflow: visible;
+}
+
+.page {
+    padding-bottom: 90px;
+}
+
+.horarios {
+    grid-auto-rows: minmax(42px, auto);
+}
+
+.whatsapp-button {
+    background: linear-gradient(120deg, var(--dourado-claro), var(--rosa-claro));
+    color: var(--azul-profundo);
+}
+
+.floating-whatsapp {
+    background: var(--dourado);
+    color: var(--azul-profundo);
+}
+
+.contact-icon {
+    background: linear-gradient(135deg, var(--dourado-claro), var(--rosa-claro));
+    color: var(--azul-profundo);
+}
+
+.contact-message {
+    background: linear-gradient(120deg, rgba(201, 120, 154, 0.25), rgba(216, 173, 85, 0.2));
+    border: 1px solid var(--borda);
+}
+
+@media (max-width: 700px) {
+    .menu {
+        background: var(--azul-profundo);
+        border-color: var(--borda);
+    }
+}
