@@ -11,6 +11,14 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname));
 
+let bancoPronto = false;
+app.use((req, res, next) => {
+    if (!bancoPronto && req.path.startsWith("/api/")) {
+        return res.status(503).json({ mensagem: "Banco de dados iniciando. Tente novamente em alguns segundos." });
+    }
+    next();
+});
+
 // 🗄️ CONEXÃO COM O BANCO DE DADOS
 const db = new sqlite3.Database(path.join(__dirname, "banco.db"));
 
@@ -60,73 +68,68 @@ function gerarHorariosPorDia(dataString) {
     return horarios;
 }
 
-// 1. CRIA A TABELA DE HORÁRIOS FOCADA APENAS NA ALINE
-db.run(`CREATE TABLE IF NOT EXISTS horarios (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    data TEXT,
-    horario TEXT,
-    disponivel INTEGER DEFAULT 1,
-    UNIQUE(data, horario)
-)`, (err) => {
-    if (!err) {
-        // GERA A GRADE AUTOMÁTICA DO DIA ATUAL DO SEU SITE (10/09/2026) ASSIM QUE LIGA
-        db.serialize(() => {
-            const dataTeste = "2026-09-10";
-            const horariosPadrao = gerarHorariosPorDia(dataTeste);
-
-            horariosPadrao.forEach(horario => {
-                db.run(
-                    "INSERT OR IGNORE INTO horarios (data, horario, disponivel) VALUES (?, ?, 1)",
-                    [dataTeste, horario]
-                );
-            });
-            console.log("📅 Grade de horários da Aline gerada com sucesso para o dia 2026-09-10!");
-        });
-    } else {
-        console.error("Erro ao criar tabela de horários:", err.message);
-    }
-});
-
-// 2. CRIA A TABELA DE AGENDAMENTOS
-db.run(`CREATE TABLE IF NOT EXISTS agendamentos (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    data TEXT,
-    horario TEXT,
-    cliente_nome TEXT,
-    cliente_servico TEXT,
-    Duracao TEXT,
-    cliente_telefone TEXT,
-    observacao TEXT,
-    cancel_token TEXT UNIQUE,
-    status TEXT DEFAULT 'confirmado'
-)`);
-
-// Migração segura para bancos antigos que ainda não possuem os novos campos.
-[
-    "ALTER TABLE agendamentos ADD COLUMN cliente_telefone TEXT",
-    "ALTER TABLE agendamentos ADD COLUMN observacao TEXT",
-    "ALTER TABLE agendamentos ADD COLUMN cancel_token TEXT",
-    "ALTER TABLE agendamentos ADD COLUMN status TEXT DEFAULT 'confirmado'"
-].forEach(comando => {
-    db.run(comando, () => {});
-});
-
-// Concilia dados antigos antes da trava: mantém o primeiro agendamento ativo
-// e marca duplicidades antigas como canceladas, preservando o histórico.
-db.run(`UPDATE agendamentos
-    SET status = 'cancelado'
-    WHERE status = 'confirmado'
-    AND id NOT IN (
-        SELECT MIN(id) FROM agendamentos
-        WHERE status = 'confirmado'
-        GROUP BY data, horario
+// Inicialização única e ordenada do banco. O SQLite executa tudo em fila;
+// a API só fica disponível depois que tabelas, migrações, índice e grade
+// inicial estiverem prontos.
+db.serialize(() => {
+    db.run(`CREATE TABLE IF NOT EXISTS horarios (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        data TEXT,
+        horario TEXT,
+        disponivel INTEGER DEFAULT 1,
+        UNIQUE(data, horario)
     )`);
 
-// Segunda camada de proteção: mesmo se a tabela de horários ficar fora de
-// sincronia, o SQLite nunca aceitará dois agendamentos ativos no mesmo slot.
-db.run(`CREATE UNIQUE INDEX IF NOT EXISTS idx_agendamento_ativo
-    ON agendamentos (data, horario)
-    WHERE status = 'confirmado'`);
+    db.run(`CREATE TABLE IF NOT EXISTS agendamentos (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        data TEXT,
+        horario TEXT,
+        cliente_nome TEXT,
+        cliente_servico TEXT,
+        Duracao TEXT,
+        cliente_telefone TEXT,
+        observacao TEXT,
+        cancel_token TEXT UNIQUE,
+        status TEXT DEFAULT 'confirmado'
+    )`);
+
+    [
+        "ALTER TABLE agendamentos ADD COLUMN cliente_telefone TEXT",
+        "ALTER TABLE agendamentos ADD COLUMN observacao TEXT",
+        "ALTER TABLE agendamentos ADD COLUMN cancel_token TEXT",
+        "ALTER TABLE agendamentos ADD COLUMN status TEXT DEFAULT 'confirmado'"
+    ].forEach(comando => db.run(comando, () => {}));
+
+    db.run(`UPDATE agendamentos
+        SET status = 'cancelado'
+        WHERE status = 'confirmado'
+        AND id NOT IN (
+            SELECT MIN(id) FROM agendamentos
+            WHERE status = 'confirmado'
+            GROUP BY data, horario
+        )`);
+
+    db.run(`CREATE UNIQUE INDEX IF NOT EXISTS idx_agendamento_ativo
+        ON agendamentos (data, horario)
+        WHERE status = 'confirmado'`);
+
+    const dataTeste = "2026-09-10";
+    gerarHorariosPorDia(dataTeste).forEach(horario => {
+        db.run(
+            "INSERT OR IGNORE INTO horarios (data, horario, disponivel) VALUES (?, ?, 1)",
+            [dataTeste, horario]
+        );
+    });
+
+    db.run("SELECT 1", err => {
+        if (err) {
+            console.error("Erro ao inicializar o banco:", err.message);
+            return;
+        }
+        bancoPronto = true;
+        console.log("Banco SQLite pronto: tabelas e proteções carregadas.");
+    });
+});
 
 
 // 🌐 ROTA 1: BUSCA OS HORÁRIOS DO CALENDÁRIO (E CRIA SE O DIA FOR NOVO)
