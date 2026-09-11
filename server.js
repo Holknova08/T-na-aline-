@@ -49,8 +49,10 @@ function gerarHorariosPorDia(dataString) {
     }
 
     const horarios = [];
-    // último horário de início fica 1h antes de fechar, pra dar tempo de atender
-    for (let hora = horaAbertura; hora < horaFechamento; hora++) {
+    // O horário de fechamento também é oferecido para agendamento,
+    // conforme a grade informada: terça a quinta até 19:00;
+    // sexta e sábado até 20:00.
+    for (let hora = horaAbertura; hora <= horaFechamento; hora++) {
         horarios.push(`${String(hora).padStart(2, "0")}:00`);
     }
 
