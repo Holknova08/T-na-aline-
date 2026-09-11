@@ -2436,3 +2436,22 @@ body {
         border-color: var(--borda);
     }
 }
+
+
+.cancel-button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 11px 14px;
+    border: 1px solid var(--borda);
+    border-radius: 12px;
+    color: var(--rosa-escuro);
+    background: transparent;
+    font-size: 12px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.cancel-button:hover {
+    background: var(--rosa-claro);
+    border-color: var(--rosa);
+}
