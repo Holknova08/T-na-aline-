@@ -16,8 +16,21 @@ const db = new sqlite3.Database(path.join(__dirname, "banco.db"));
 // 🕐 GERA A GRADE DE HORÁRIOS CONFORME O DIA DA SEMANA
 // Terça, quarta e quinta: 9h às 19h | Sexta e sábado: 8h às 20h | Domingo e segunda: fechado
 function gerarHorariosPorDia(dataString) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dataString || "")) {
+        return [];
+    }
+
     const [ano, mes, dia] = dataString.split("-").map(Number);
     const dataObj = new Date(ano, mes - 1, dia); // data local, evita bug de fuso horário
+
+    if (
+        dataObj.getFullYear() !== ano ||
+        dataObj.getMonth() !== mes - 1 ||
+        dataObj.getDate() !== dia
+    ) {
+        return [];
+    }
+
     const diaSemana = dataObj.getDay(); // 0=domingo, 1=segunda, 2=terça, 3=quarta, 4=quinta, 5=sexta, 6=sábado
 
     let horaAbertura, horaFechamento;
@@ -85,6 +98,11 @@ db.run(`CREATE TABLE IF NOT EXISTS agendamentos (
 // 🌐 ROTA 1: BUSCA OS HORÁRIOS DO CALENDÁRIO (E CRIA SE O DIA FOR NOVO)
 app.get('/api/horarios', (req, res) => {
     const dataSelecionada = req.query.data; 
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dataSelecionada || "")) {
+        return res.status(400).json({ mensagem: "Data inválida. Use o formato AAAA-MM-DD." });
+    }
+
     const horariosPadrao = gerarHorariosPorDia(dataSelecionada);
 
     // Busca todos os horários que continuam disponíveis (disponivel = 1) para mandar pro site
@@ -99,27 +117,21 @@ app.get('/api/horarios', (req, res) => {
         });
     };
 
-    // Checa se o dia já tem horários criados
-    db.get("SELECT id FROM horarios WHERE data = ? LIMIT 1", [dataSelecionada], (err, row) => {
-        if (err) return res.status(500).json({ mensagem: "Erro no banco de dados." });
+    // Garante a grade completa em toda consulta. O INSERT OR IGNORE
+    // repõe somente horários ausentes e preserva os já agendados (disponivel = 0).
+    // Antes, a grade só era criada quando não existia nenhuma linha para a data;
+    // assim, uma data com grade incompleta nunca recebia os horários faltantes.
+    db.serialize(() => {
+        horariosPadrao.forEach(horario => {
+            db.run(
+                "INSERT OR IGNORE INTO horarios (data, horario, disponivel) VALUES (?, ?, 1)",
+                [dataSelecionada, horario]
+            );
+        });
 
-        // Se for um dia totalmente novo no calendário, cria a grade automaticamente na hora!
-        if (!row) {
-            db.serialize(() => {
-                horariosPadrao.forEach(horario => {
-                    db.run(
-                        "INSERT OR IGNORE INTO horarios (data, horario, disponivel) VALUES (?, ?, 1)",
-                        [dataSelecionada, horario]
-                    );
-                });
-
-                // Só busca DEPOIS que todas as inserções acima já foram enfileiradas,
-                // garantindo que os horários já existem antes de responder.
-                buscarHorarios();
-            });
-        } else {
-            buscarHorarios();
-        }
+        // A consulta entra na fila depois das inserções, então a resposta
+        // sempre contém a grade completa de horários disponíveis.
+        buscarHorarios();
     });
 });
 
@@ -128,22 +140,55 @@ app.get('/api/horarios', (req, res) => {
 app.post('/api/agendar', (req, res) => {
     const { data, horario, clienteNome, clienteServico } = req.body;
 
-    // Verifica se o horário ainda está livre para evitar cliques duplos
-    db.get("SELECT disponivel FROM horarios WHERE data = ? AND horario = ?", [data, horario], (err, row) => {
-        if (err || !row || row.disponivel === 0) {
-            return res.status(400).json({ mensagem: "Desculpe, este horário acabou de ser preenchido!" });
-        }
+    const horariosValidos = gerarHorariosPorDia(data);
+    if (
+        !/^\d{4}-\d{2}-\d{2}$/.test(data || "") ||
+        !horariosValidos.includes(horario) ||
+        !String(clienteNome || "").trim() ||
+        !String(clienteServico || "").trim()
+    ) {
+        return res.status(400).json({ mensagem: "Dados do agendamento inválidos." });
+    }
 
-        db.serialize(() => {
-            // Insere o cliente na tabela de agendamentos
-            db.run("INSERT INTO agendamentos (data, horario, cliente_nome, cliente_servico) VALUES (?, ?, ?, ?)", 
-                [data, horario, clienteNome, clienteServico]);
+    // Transação + UPDATE condicional: dois cliques simultâneos não conseguem
+    // reservar o mesmo horário.
+    db.serialize(() => {
+        db.run("BEGIN IMMEDIATE TRANSACTION", (beginErr) => {
+            if (beginErr) return res.status(500).json({ mensagem: "Erro ao iniciar agendamento." });
 
-            // Muda o status para 0 (faz sumir do site)
-            db.run("UPDATE horarios SET disponivel = 0 WHERE data = ? AND horario = ?", [data, horario], function(err) {
-                if (err) return res.status(500).json({ mensagem: "Erro ao processar agendamento." });
-                res.json({ mensagem: "Agendamento realizado com sucesso! O horário foi retirado do sistema." });
-            });
+            db.run(
+                "UPDATE horarios SET disponivel = 0 WHERE data = ? AND horario = ? AND disponivel = 1",
+                [data, horario],
+                function (updateErr) {
+                    if (updateErr || this.changes !== 1) {
+                        return db.run("ROLLBACK", () => {
+                            res.status(400).json({ mensagem: "Desculpe, este horário acabou de ser preenchido!" });
+                        });
+                    }
+
+                    db.run(
+                        "INSERT INTO agendamentos (data, horario, cliente_nome, cliente_servico) VALUES (?, ?, ?, ?)",
+                        [data, horario, String(clienteNome).trim(), String(clienteServico).trim()],
+                        (insertErr) => {
+                            if (insertErr) {
+                                return db.run("ROLLBACK", () => {
+                                    res.status(500).json({ mensagem: "Erro ao salvar o agendamento." });
+                                });
+                            }
+
+                            db.run("COMMIT", (commitErr) => {
+                                if (commitErr) {
+                                    return db.run("ROLLBACK", () => {
+                                        res.status(500).json({ mensagem: "Erro ao confirmar o agendamento." });
+                                    });
+                                }
+
+                                res.json({ mensagem: "Agendamento realizado com sucesso! O horário foi retirado do sistema." });
+                            });
+                        }
+                    );
+                }
+            );
         });
     });
 });
