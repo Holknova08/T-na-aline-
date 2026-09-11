@@ -1,3 +1,4 @@
+
 const pages =
     document.querySelectorAll(".page");
 
@@ -202,6 +203,7 @@ const nextMonth = document.getElementById("nextMonth");
 const horariosContainer = document.getElementById("horarios");
 
 const nomeInput = document.getElementById("nome");
+const telefoneInput = document.getElementById("telefone");
 const observacaoInput = document.getElementById("observacao");
 
 const confirmarAgendamento =
@@ -693,6 +695,11 @@ nomeInput.addEventListener(
     verificarFormulario
 );
 
+telefoneInput.addEventListener(
+    "input",
+    verificarFormulario
+);
+
 
 function verificarFormulario() {
 
@@ -701,7 +708,8 @@ function verificarFormulario() {
             servicoSelecionado &&
             dataSelecionada &&
             horarioSelecionado &&
-            nomeInput.value.trim()
+            nomeInput.value.trim() &&
+            telefoneInput.value.trim()
         );
 
 }
@@ -719,7 +727,8 @@ confirmarAgendamento.addEventListener(
             !servicoSelecionado ||
             !dataSelecionada ||
             !horarioSelecionado ||
-            !nomeInput.value.trim()
+            !nomeInput.value.trim() ||
+            !telefoneInput.value.trim()
         ) {
 
             return;
@@ -729,6 +738,9 @@ confirmarAgendamento.addEventListener(
 
         const nome =
             nomeInput.value.trim();
+
+        const telefone =
+            telefoneInput.value.trim();
 
 
         const observacao =
@@ -741,6 +753,9 @@ confirmarAgendamento.addEventListener(
 
         const dataFormatada =
             `${partes[2]}/${partes[1]}/${partes[0]}`;
+
+        // Impede dois cliques antes mesmo de a resposta do servidor chegar.
+        confirmarAgendamento.disabled = true;
 
 
         let mensagem =
@@ -769,15 +784,30 @@ Gostaria de agendar um horário.
             `\n\nAguardo a confirmação. 💕`;
 
 
-        const numero =
-            "5511949878993";
+        fetch("/api/agendar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                data: dataSelecionada,
+                horario: horarioSelecionado,
+                clienteNome: nome,
+                clienteTelefone: telefone,
+                clienteServico: servicoSelecionado,
+                observacao
+            })
+        })
+            .then(async resposta => {
+                const resultado = await resposta.json();
+                if (!resposta.ok) throw new Error(resultado.mensagem || "Não foi possível finalizar o agendamento.");
 
-
-        const url =
-            `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
-
-
-        window.location.href = url;
+                const linkCancelamento = `${window.location.origin}/api/cancelar?token=${encodeURIComponent(resultado.token)}`;
+                const mensagemFinal = `Olá, Aline! 🌷\n\nNovo agendamento finalizado.\n\n👤 Nome: ${nome}\n📱 Telefone: ${telefone}\n✨ Serviço: ${servicoSelecionado}\n📅 Data: ${dataFormatada}\n🕐 Horário: ${horarioSelecionado}\n\nCancelar: ${linkCancelamento}`;
+                window.location.href = `https://wa.me/5511985205076?text=${encodeURIComponent(mensagemFinal)}`;
+            })
+            .catch(erro => {
+                confirmarAgendamento.disabled = false;
+                alert(erro.message);
+            });
 
     }
 );
