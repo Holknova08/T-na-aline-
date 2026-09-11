@@ -4,7 +4,7 @@ const path = require("path");
 const cors = require("cors");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -12,6 +12,37 @@ app.use(express.static(__dirname));
 
 // 🗄️ CONEXÃO COM O BANCO DE DADOS
 const db = new sqlite3.Database(path.join(__dirname, "banco.db"));
+
+// 🕐 GERA A GRADE DE HORÁRIOS CONFORME O DIA DA SEMANA
+// Terça, quarta e quinta: 9h às 19h | Sexta e sábado: 8h às 20h | Domingo e segunda: fechado
+function gerarHorariosPorDia(dataString) {
+    const [ano, mes, dia] = dataString.split("-").map(Number);
+    const dataObj = new Date(ano, mes - 1, dia); // data local, evita bug de fuso horário
+    const diaSemana = dataObj.getDay(); // 0=domingo, 1=segunda, 2=terça, 3=quarta, 4=quinta, 5=sexta, 6=sábado
+
+    let horaAbertura, horaFechamento;
+
+    if (diaSemana === 2 || diaSemana === 3 || diaSemana === 4) {
+        // terça, quarta, quinta
+        horaAbertura = 9;
+        horaFechamento = 19;
+    } else if (diaSemana === 5 || diaSemana === 6) {
+        // sexta, sábado
+        horaAbertura = 8;
+        horaFechamento = 20;
+    } else {
+        // domingo e segunda: fechado
+        return [];
+    }
+
+    const horarios = [];
+    // último horário de início fica 1h antes de fechar, pra dar tempo de atender
+    for (let hora = horaAbertura; hora < horaFechamento; hora++) {
+        horarios.push(`${String(hora).padStart(2, "0")}:00`);
+    }
+
+    return horarios;
+}
 
 // 1. CRIA A TABELA DE HORÁRIOS FOCADA APENAS NA ALINE
 db.run(`CREATE TABLE IF NOT EXISTS horarios (
@@ -24,8 +55,8 @@ db.run(`CREATE TABLE IF NOT EXISTS horarios (
     if (!err) {
         // GERA A GRADE AUTOMÁTICA DO DIA ATUAL DO SEU SITE (10/09/2026) ASSIM QUE LIGA
         db.serialize(() => {
-            const horariosPadrao = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"];
             const dataTeste = "2026-09-10";
+            const horariosPadrao = gerarHorariosPorDia(dataTeste);
 
             horariosPadrao.forEach(horario => {
                 db.run(
@@ -54,7 +85,7 @@ db.run(`CREATE TABLE IF NOT EXISTS agendamentos (
 // 🌐 ROTA 1: BUSCA OS HORÁRIOS DO CALENDÁRIO (E CRIA SE O DIA FOR NOVO)
 app.get('/api/horarios', (req, res) => {
     const dataSelecionada = req.query.data; 
-    const horariosPadrao = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"];
+    const horariosPadrao = gerarHorariosPorDia(dataSelecionada);
 
     // Busca todos os horários que continuam disponíveis (disponivel = 1) para mandar pro site
     const buscarHorarios = () => {
