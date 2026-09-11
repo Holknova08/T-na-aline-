@@ -2,6 +2,7 @@ const express = require("express");
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 const cors = require("cors");
+const crypto = require("crypto");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -93,8 +94,39 @@ db.run(`CREATE TABLE IF NOT EXISTS agendamentos (
     horario TEXT,
     cliente_nome TEXT,
     cliente_servico TEXT,
-    Duracao TEXT
+    Duracao TEXT,
+    cliente_telefone TEXT,
+    observacao TEXT,
+    cancel_token TEXT UNIQUE,
+    status TEXT DEFAULT 'confirmado'
 )`);
+
+// Migração segura para bancos antigos que ainda não possuem os novos campos.
+[
+    "ALTER TABLE agendamentos ADD COLUMN cliente_telefone TEXT",
+    "ALTER TABLE agendamentos ADD COLUMN observacao TEXT",
+    "ALTER TABLE agendamentos ADD COLUMN cancel_token TEXT",
+    "ALTER TABLE agendamentos ADD COLUMN status TEXT DEFAULT 'confirmado'"
+].forEach(comando => {
+    db.run(comando, () => {});
+});
+
+// Concilia dados antigos antes da trava: mantém o primeiro agendamento ativo
+// e marca duplicidades antigas como canceladas, preservando o histórico.
+db.run(`UPDATE agendamentos
+    SET status = 'cancelado'
+    WHERE status = 'confirmado'
+    AND id NOT IN (
+        SELECT MIN(id) FROM agendamentos
+        WHERE status = 'confirmado'
+        GROUP BY data, horario
+    )`);
+
+// Segunda camada de proteção: mesmo se a tabela de horários ficar fora de
+// sincronia, o SQLite nunca aceitará dois agendamentos ativos no mesmo slot.
+db.run(`CREATE UNIQUE INDEX IF NOT EXISTS idx_agendamento_ativo
+    ON agendamentos (data, horario)
+    WHERE status = 'confirmado'`);
 
 
 // 🌐 ROTA 1: BUSCA OS HORÁRIOS DO CALENDÁRIO (E CRIA SE O DIA FOR NOVO)
@@ -140,13 +172,14 @@ app.get('/api/horarios', (req, res) => {
 
 // 🛒 ROTA 2: SALVA O AGENDAMENTO E FAZ O HORÁRIO SUMIR DO SITE DINAMICAMENTE
 app.post('/api/agendar', (req, res) => {
-    const { data, horario, clienteNome, clienteServico } = req.body;
+    const { data, horario, clienteNome, clienteTelefone, clienteServico, observacao } = req.body;
 
     const horariosValidos = gerarHorariosPorDia(data);
     if (
         !/^\d{4}-\d{2}-\d{2}$/.test(data || "") ||
         !horariosValidos.includes(horario) ||
         !String(clienteNome || "").trim() ||
+        !String(clienteTelefone || "").trim() ||
         !String(clienteServico || "").trim()
     ) {
         return res.status(400).json({ mensagem: "Dados do agendamento inválidos." });
@@ -155,6 +188,7 @@ app.post('/api/agendar', (req, res) => {
     // Transação + UPDATE condicional: dois cliques simultâneos não conseguem
     // reservar o mesmo horário.
     db.serialize(() => {
+        const cancelToken = crypto.randomBytes(24).toString("hex");
         db.run("BEGIN IMMEDIATE TRANSACTION", (beginErr) => {
             if (beginErr) return res.status(500).json({ mensagem: "Erro ao iniciar agendamento." });
 
@@ -169,8 +203,8 @@ app.post('/api/agendar', (req, res) => {
                     }
 
                     db.run(
-                        "INSERT INTO agendamentos (data, horario, cliente_nome, cliente_servico) VALUES (?, ?, ?, ?)",
-                        [data, horario, String(clienteNome).trim(), String(clienteServico).trim()],
+                        "INSERT INTO agendamentos (data, horario, cliente_nome, cliente_servico, cliente_telefone, observacao, cancel_token, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'confirmado')",
+                        [data, horario, String(clienteNome).trim(), String(clienteServico).trim(), String(clienteTelefone).trim(), String(observacao || "").trim(), cancelToken],
                         (insertErr) => {
                             if (insertErr) {
                                 return db.run("ROLLBACK", () => {
@@ -185,7 +219,7 @@ app.post('/api/agendar', (req, res) => {
                                     });
                                 }
 
-                                res.json({ mensagem: "Agendamento realizado com sucesso! O horário foi retirado do sistema." });
+                                res.json({ mensagem: "Agendamento realizado com sucesso! O horário foi retirado do sistema.", token: cancelToken });
                             });
                         }
                     );
@@ -195,6 +229,48 @@ app.post('/api/agendar', (req, res) => {
     });
 });
 
+// Link de cancelamento: mantém o histórico, altera o status e libera o horário.
+app.get('/api/cancelar', (req, res) => {
+    const token = String(req.query.token || "");
+    if (!/^[a-f0-9]{48}$/.test(token)) {
+        return res.status(400).send("Link de cancelamento inválido.");
+    }
+
+    db.get("SELECT data, horario, cliente_servico, status FROM agendamentos WHERE cancel_token = ?", [token], (findErr, agendamento) => {
+        if (findErr) return res.status(500).send("Não foi possível processar o cancelamento.");
+        if (!agendamento) return res.status(404).send("Agendamento não encontrado.");
+        if (agendamento.status === "cancelado") return res.send("Este agendamento já foi cancelado e o horário já está disponível.");
+
+        db.serialize(() => {
+            db.run("BEGIN IMMEDIATE TRANSACTION", beginErr => {
+                if (beginErr) return res.status(500).send("Não foi possível iniciar o cancelamento.");
+
+                db.run(
+                    "UPDATE agendamentos SET status = 'cancelado' WHERE cancel_token = ? AND status = 'confirmado'",
+                    [token],
+                    function (updateErr) {
+                        if (updateErr || this.changes !== 1) {
+                            return db.run("ROLLBACK", () => res.send("Este agendamento já foi cancelado e o horário já está disponível."));
+                        }
+
+                        db.run(
+                            "UPDATE horarios SET disponivel = 1 WHERE data = ? AND horario = ?",
+                            [agendamento.data, agendamento.horario],
+                            releaseErr => {
+                                if (releaseErr) return db.run("ROLLBACK", () => res.status(500).send("Não foi possível liberar o horário."));
+                                db.run("COMMIT", commitErr => {
+                                    if (commitErr) return res.status(500).send("Não foi possível confirmar o cancelamento.");
+                                    const site = `${req.protocol}://${req.get("host")}`;
+                                    res.send(`Agendamento cancelado com sucesso.<br><br>Serviço: ${agendamento.cliente_servico}<br>Horário liberado: ${agendamento.horario}<br><br><a href="${site}">Voltar ao site e escolher novamente</a>`);
+                                });
+                            }
+                        );
+                    }
+                );
+            });
+        });
+    });
+});
 
 // 🔒 ROTA 3: PAINEL DA ADMINISTRAÇÃO SECRETA (Lista quem agendou)
 app.get('/api/admin/agendamentos', (req, res) => {
