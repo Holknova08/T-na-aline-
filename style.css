@@ -2224,3 +2224,215 @@ body {
         border-color: var(--borda);
     }
 }
+
+
+/* =====================================
+   VISUAL FEMININO — ROSÉ, NUDE, LILÁS E DOURADO
+===================================== */
+:root {
+    --fundo: #fff8f7;
+    --fundo-rosado: #f9e8eb;
+    --rosa: #c98298;
+    --rosa-escuro: #a85e78;
+    --rosa-claro: #f2c8d3;
+    --lilas: #d9cfe2;
+    --dourado: #c79a52;
+    --dourado-claro: #e8c982;
+    --texto: #51434a;
+    --texto-suave: #84737c;
+    --borda: #ead4d9;
+    --cartao: rgba(255, 252, 251, 0.92);
+}
+
+body {
+    background:
+        radial-gradient(circle at 8% 4%, rgba(242, 200, 211, 0.8), transparent 28%),
+        radial-gradient(circle at 94% 14%, rgba(217, 207, 226, 0.72), transparent 27%),
+        linear-gradient(145deg, #fffafa 0%, #f9eef0 52%, #f5f0f6 100%);
+    color: var(--texto);
+}
+
+.header {
+    background: rgba(255, 250, 250, 0.9);
+    border-bottom-color: var(--borda);
+}
+
+.logo,
+.page-title h2,
+.booking-info h2,
+.booking-step h3,
+.contact-message strong,
+.home-bottom strong,
+.contact-card strong,
+.resumo-agendamento strong {
+    color: var(--texto);
+}
+
+.logo span,
+.hero h1 span,
+.eyebrow,
+.page-title span,
+.mini-title,
+.service-category-title,
+.booking-detail > span,
+.data-escolhida,
+.home-bottom strong,
+.contact-card span {
+    color: var(--rosa-escuro);
+}
+
+.menu-link { color: var(--texto-suave); }
+.menu-link:hover,
+.menu-link.active {
+    color: #fff;
+    background: linear-gradient(120deg, var(--rosa), var(--rosa-escuro));
+}
+
+.menu-mobile { color: var(--rosa-escuro); }
+
+.page,
+#inicio,
+#sobre,
+#servicos,
+#agendamento,
+#contato {
+    background: transparent;
+}
+
+.hero p,
+.booking-info > p,
+.page-title p,
+.about-text p,
+.home-bottom span,
+.contact-card small,
+.booking-detail small,
+.data-escolhida,
+.service-item-duration,
+.schedule-message {
+    color: var(--texto-suave);
+}
+
+.btn-primary,
+.whatsapp-button {
+    color: #fff;
+    background: linear-gradient(120deg, var(--rosa), var(--rosa-escuro));
+    box-shadow: 0 10px 24px rgba(168, 94, 120, 0.2);
+}
+
+.btn-outline {
+    color: var(--rosa-escuro);
+    background: rgba(255, 255, 255, 0.5);
+    border-color: var(--borda);
+}
+
+.hero-image,
+.about-photo {
+    background: linear-gradient(145deg, #eebbc8, #d9cfe2 55%, #e7c982);
+    box-shadow: 0 30px 70px rgba(151, 104, 121, 0.16);
+}
+
+.image-content { color: var(--rosa-escuro); }
+.image-content strong { color: #fff; }
+.home-bottom div { border-top-color: var(--borda); }
+
+.about-points div,
+.contact-card,
+.booking-detail,
+.booking-form,
+.booking-step,
+.page-title {
+    background: var(--cartao);
+    border-color: var(--borda);
+    color: var(--texto);
+    box-shadow: 0 12px 32px rgba(150, 105, 123, 0.08);
+}
+
+/* Área de Serviços e seleção do agendamento sem fundo branco estourado. */
+.service-row,
+.calendar,
+.resumo-agendamento,
+.horario-button,
+.schedule-message {
+    background: linear-gradient(145deg, #fffafa, #f9edf0);
+    border-color: var(--borda);
+    color: var(--texto);
+}
+
+.service-row:hover,
+.service-row.selected,
+.horario-button:hover,
+.horario-button.selected {
+    background: linear-gradient(120deg, var(--rosa-claro), #e7d9e8);
+    border-color: var(--rosa);
+    color: var(--rosa-escuro);
+}
+
+.service-item-name,
+.service-item-duration,
+.service-item-arrow,
+.booking-step h3,
+.calendar-header strong,
+.resumo-agendamento strong,
+.resumo-agendamento p {
+    color: var(--texto);
+}
+
+.service-item-duration,
+.resumo-agendamento p { color: var(--texto-suave); }
+
+.booking-form input,
+.booking-form select,
+.booking-form textarea {
+    background: #fffdfd;
+    border-color: var(--borda);
+    color: var(--texto);
+}
+
+.calendar-nav {
+    background: #fffafa;
+    color: var(--rosa-escuro);
+}
+
+.calendar-nav:hover,
+.calendar-days button.selected {
+    background: var(--rosa);
+    color: #fff;
+}
+
+.calendar-days button { color: var(--texto); }
+.calendar-days button:hover:not(:disabled) {
+    background: var(--rosa-claro);
+    color: var(--rosa-escuro);
+}
+
+.booking-container,
+.booking-form,
+.booking-step,
+.horarios {
+    overflow: visible;
+}
+
+.page { padding-bottom: 90px; }
+.horarios { grid-auto-rows: minmax(42px, auto); }
+
+.floating-whatsapp {
+    background: var(--rosa);
+    color: #fff;
+}
+
+.contact-icon {
+    background: linear-gradient(135deg, var(--rosa-claro), var(--dourado-claro));
+    color: var(--rosa-escuro);
+}
+
+.contact-message {
+    background: linear-gradient(120deg, rgba(242, 200, 211, 0.58), rgba(217, 207, 226, 0.5));
+    border: 1px solid var(--borda);
+}
+
+@media (max-width: 700px) {
+    .menu {
+        background: #fffafa;
+        border-color: var(--borda);
+    }
+}
